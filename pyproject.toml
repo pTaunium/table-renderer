@@ -1,0 +1,96 @@
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[project]
+name = "table-renderer"
+version = "0.1.0"
+description = "A Python library for rendering structured tables as high-quality images or HTML."
+readme = "README.md"
+license = "MIT"
+authors = [
+  { name = "pTaunium", email = "pTaunium@gmail.com" }
+]
+requires-python = ">=3.12,<3.15"
+keywords = ["table", "renderer", "rendering", "image", "html", "weasyprint", "pdfium", "report"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Operating System :: OS Independent",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "jinja2~=3.0",
+  "pillow~=12.0",
+  "pypdfium2~=5.0",
+  "weasyprint>=68.1",
+]
+
+
+[dependency-groups]
+dev = [
+  "ipython",
+  "pytest~=9.0",
+  "pytest-cov~=7.0",
+  "ruff~=0.15",
+  "ty>=0.0.41",
+]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+  "E",     # pycodestyle error
+  "W",     # pycodestyle warning
+  "I",     # isort
+  "N",     # pep8-naming
+  "F",     # Pyflakes
+  "C90",   # McCabe
+  "ANN",   # flake8-annotations
+  "ASYNC", # flake8-async
+  "S",     # flake8-bandit
+  "B",     # flake8-bugbear
+  "A",     # flake8-builtins
+  "C4",    # flake8-comprehensions
+  "PIE",   # flake8-pie
+  "PT",    # flake8-pytest-style
+  "RET",   # flake8-return
+  "SIM",   # flake8-simplify
+  "PERF",  # Perflint
+  "FURB",  # refurb
+  "UP",    # pyupgrade
+  "RUF",   # Ruff-specific rules
+]
+ignore = [
+  "E501", # line-too-long
+]
+
+[tool.ruff.lint.isort]
+section-order = [
+  "future",
+  "standard-library",
+  "third-party",
+  "first-party",
+  "local-folder",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+  "S101", # assert
+  "S105", # hardcoded-password-string
+  "S106", # hardcoded-password-func-arg
+  "S107", # hardcoded-password-default
+]
+
+[tool.coverage.run]
+source = ["src"]
