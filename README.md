@@ -6,7 +6,7 @@
 
 <!-- README-I18N:END -->
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](pyproject.toml)
 [![CI](https://github.com/pTaunium/table-renderer/actions/workflows/ci.yml/badge.svg)](https://github.com/pTaunium/table-renderer/actions)
 
