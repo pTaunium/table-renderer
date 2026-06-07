@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](pyproject.toml)
 [![CI](https://github.com/pTaunium/table-renderer/actions/workflows/ci.yml/badge.svg)](https://github.com/pTaunium/table-renderer/actions)
+[![codecov](https://codecov.io/gh/pTaunium/table-renderer/graph/badge.svg)](https://codecov.io/gh/pTaunium/table-renderer)
 
 `table-renderer` 是一個強大且輕量級的 Python Library，專門用於將結構化表格轉換為高品質的圖片（PNG, JPG, WebP）或 HTML。它結合了 CSS 排版的強大功能與 Python 的易用性，特別適合用於自動化報表、Kubernetes CronJob 任務或任何資料視覺化場景。
 

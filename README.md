@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](pyproject.toml)
 [![CI](https://github.com/pTaunium/table-renderer/actions/workflows/ci.yml/badge.svg)](https://github.com/pTaunium/table-renderer/actions)
+[![codecov](https://codecov.io/gh/pTaunium/table-renderer/graph/badge.svg)](https://codecov.io/gh/pTaunium/table-renderer)
 
 `table-renderer` is a powerful and lightweight Python library designed to convert structured tables into high-quality images (PNG, JPG, WebP) or HTML. By combining the layout power of CSS with an intuitive Python API, it's perfect for automated reporting, Kubernetes CronJobs, or any data visualization task.
 

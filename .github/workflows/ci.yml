@@ -79,10 +79,14 @@ jobs:
         run: uv sync --all-groups
 
       - name: Run Tests
-        run: uv run pytest --cov=src/table_renderer tests/
+        run: uv run pytest --cov src/ --cov-branch --cov-report=xml tests/
         env:
           CI: true
 
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
   build:
     runs-on: ubuntu-latest
     needs: test
