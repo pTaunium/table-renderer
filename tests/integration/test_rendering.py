@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -30,9 +29,6 @@ def test_html_font_registration() -> None:
     assert "my_custom_font" in html
 
 
-@pytest.mark.skipif(
-    os.environ.get("CI") == "true", reason="Skip heavy rendering in basic CI"
-)
 @pytest.mark.parametrize("ext", ["png", "jpg", "webp"])
 def test_image_generation_formats(tmp_path: Path, ext: str) -> None:
     """Test image generation in various formats."""
@@ -45,9 +41,6 @@ def test_image_generation_formats(tmp_path: Path, ext: str) -> None:
     assert output_path.stat().st_size > 0
 
 
-@pytest.mark.skipif(
-    os.environ.get("CI") == "true", reason="Skip heavy rendering in basic CI"
-)
 def test_image_dpi_scaling(tmp_path: Path) -> None:
     """Test that DPI scaling affects the output image validly."""
     table = Table(1, 1)
