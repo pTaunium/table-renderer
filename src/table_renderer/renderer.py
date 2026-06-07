@@ -116,8 +116,11 @@ def render_to_html(table: "Table") -> str:
             # Handle Image URL resolution
             cell.image_url = ""
             if cell.image_path:
-                abs_img_path = os.path.abspath(cell.image_path)
-                cell.image_url = f"file://{abs_img_path}"
+                if cell.image_path.startswith(("http://", "https://")):
+                    cell.image_url = cell.image_path
+                else:
+                    abs_img_path = os.path.abspath(cell.image_path)
+                    cell.image_url = f"file://{abs_img_path}"
 
             # Attach final style string for template
             cell.final_style = final_style.to_css()

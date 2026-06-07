@@ -113,12 +113,14 @@ table.set_font(family="Roboto-Regular, NotoSansTC-Medium")
 
 ### 3. 在儲存格嵌入圖片
 
-您可以輕鬆地將本地圖片嵌入到任何儲存格中。
+您可以輕鬆地將本地圖片或網路圖片 (URL) 嵌入到任何儲存格中。
 
 ```python
-# Set an image with optional width/height constraints
+# 嵌入本地圖片
 table.cell(1, 0).set_image("path/to/logo.png", width=50)
-table.cell(1, 0).set_text("Company Logo") # Text appears below the image
+
+# 嵌入網路圖片 URL
+table.cell(1, 1).set_image("https://example.com/image.jpg", width=100)
 ```
 
 ### 4. 版面與尺寸

@@ -113,12 +113,14 @@ table.set_font(family="Roboto-Regular, NotoSansTC-Medium")
 
 ### 3. Embedding Images in Cells
 
-You can easily embed local images into any cell.
+You can embed both local images and remote URLs into any cell.
 
 ```python
-# Set an image with optional width/height constraints
+# Set a local image
 table.cell(1, 0).set_image("path/to/logo.png", width=50)
-table.cell(1, 0).set_text("Company Logo") # Text appears below the image
+
+# Set a remote image URL
+table.cell(1, 1).set_image("https://example.com/image.jpg", width=100)
 ```
 
 ### 4. Layout & Sizing

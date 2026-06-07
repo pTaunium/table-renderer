@@ -73,3 +73,18 @@ def test_image_embedding_in_html() -> None:
     assert "file://" in html
     assert "width: 100px;" in html
     assert "assets/example_table.png" in html.replace("\\", "/")
+
+
+def test_remote_image_url_in_html() -> None:
+    """Test that a remote image URL is used directly in the generated HTML."""
+    table = Table(1, 1)
+    url = "https://example.com/remote_image.png"
+    table.cell(0, 0).set_image(url, height=50)
+
+    from table_renderer.renderer import render_to_html
+
+    html = render_to_html(table)
+
+    assert "<img" in html
+    assert 'src="https://example.com/remote_image.png"' in html
+    assert "height: 50px;" in html
