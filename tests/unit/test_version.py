@@ -5,5 +5,5 @@ def test_version_string() -> None:
     """Test that the package has a version string."""
     assert hasattr(table_renderer, "__version__")
     assert isinstance(table_renderer.__version__, str)
-    # The default fallback in __init__.py is "0.2.0"
-    assert table_renderer.__version__ == "0.2.0"
+    # The default fallback in __init__.py is "0.3.0"
+    assert table_renderer.__version__ == "0.3.0"
