@@ -167,9 +167,8 @@ FROM python:3.12-slim
 # Install system dependencies for WeasyPrint rendering and fonts
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
-    libharfbuzz0b \
     libpangoft2-1.0-0 \
-    libpangocairo-1.0-0 \
+    libharfbuzz-subset0 \
     fonts-noto-cjk \
     && rm -rf /var/lib/apt/lists/*
 
