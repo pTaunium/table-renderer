@@ -198,7 +198,8 @@ def render_to_image(
 
         # Render each page to a PIL Image
         for page in pdf:
-            bitmap = page.render(scale=scale_factor)
+            # fill_color=(255, 255, 255, 0) ensures the background is transparent
+            bitmap = page.render(scale=scale_factor, fill_color=(255, 255, 255, 0))
             pil_page = bitmap.to_pil()
             page_images.append(pil_page)
             bitmap.close()
