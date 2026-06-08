@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-09
+
 ### Added
 - **Dynamic Sizing**: Added dynamic width and height estimation for the rendering canvas to optimize performance for small tables and prevent clipping for extremely wide tables.
 - **Continuous Tables**: Support for rendering extremely long tables by automatically stitching multiple PDF pages into a single continuous long image.
