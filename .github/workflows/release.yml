@@ -29,8 +29,12 @@ jobs:
       - name: Publish to PyPI
         run: uv publish
 
+      - name: Extract Release Notes
+        id: extract_notes
+        uses: ffurrer2/extract-release-notes@v2
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
-          generate_release_notes: true
+          body: ${{ steps.extract_notes.outputs.release_notes }}
