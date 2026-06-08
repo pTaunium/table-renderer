@@ -38,7 +38,7 @@ class Cell(StyledObject):
         return self
 
     def set_image(
-        self, path: str, width: int | None = None, height: int | None = None
+        self, path: str, *, width: int | None = None, height: int | None = None
     ) -> Self:
         """
         Set an image to be displayed in the cell.
@@ -56,7 +56,7 @@ class Cell(StyledObject):
         self.image_height = height
         return self
 
-    def span(self, rows: int = 1, cols: int = 1) -> Self:
+    def span(self, *, rows: int = 1, cols: int = 1) -> Self:
         """
         Set the row and column span for merging.
 

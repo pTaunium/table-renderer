@@ -60,7 +60,7 @@ from table_renderer import Table
 # 1. Initialize a 3x3 table
 table = Table(3, 3)
 table.set_width(600)
-table.set_border(1, "black", "solid")
+table.set_border(width=1, color="black", style="solid")
 
 # 2. Set header style (Row 0)
 header = table.get_row(0)

@@ -112,7 +112,7 @@ class Table(StyledObject):
         self.font_files.append(font_path)
         return self
 
-    def to_image(self, output_path: str, dpi: int = 144, padding: int = 10) -> None:
+    def to_image(self, output_path: str, *, dpi: int = 144, padding: int = 10) -> None:
         """
         Render the table to an image file.
 

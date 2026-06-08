@@ -172,6 +172,7 @@ def render_to_html(table: "Table") -> str:
 def render_to_image(
     table: "Table",
     output_path: str,
+    *,
     dpi: int = 144,
     padding: int = 10,
 ) -> None:

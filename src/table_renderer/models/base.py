@@ -12,6 +12,7 @@ class StyledObject:
 
     def set_font(
         self,
+        *,
         size: int | None = None,
         color: str | None = None,
         family: str | None = None,
@@ -50,6 +51,7 @@ class StyledObject:
 
     def set_align(
         self,
+        *,
         horizontal: Literal["left", "center", "right"] | None = None,
         vertical: Literal["top", "middle", "bottom"] | None = None,
     ) -> Self:
@@ -69,6 +71,7 @@ class StyledObject:
 
     def set_border(
         self,
+        *,
         width: int | None = None,
         color: str | None = None,
         style: Literal["solid", "dashed", "dotted"] | None = None,
