@@ -49,12 +49,11 @@ def test_table_cascading_inheritance_simulation() -> None:
     table.get_row(0).set_font(color="red")
     table.cell(0, 0).set_background("blue")
 
-    # Final styles are calculated during preparation for render
     from table_renderer.renderer import render_to_html
 
-    render_to_html(table)
+    html = render_to_html(table)
 
-    cell_style = table.cell(0, 0).final_style
-    assert "font-size: 20px;" in cell_style  # Inherited from Table
-    assert "color: red;" in cell_style  # Overridden by Row
-    assert "background-color: blue;" in cell_style  # Set on Cell
+    assert "font-size: 20px;" in html
+    assert "color: red;" in html
+    assert "background-color: blue;" in html
+    assert 'class="row-0 col-0"' in html

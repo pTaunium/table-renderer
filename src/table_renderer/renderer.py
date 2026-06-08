@@ -37,18 +37,19 @@ table {
 td {
     padding: 8px;
     box-sizing: border-box;
+    {{ table_style }}
 }
+
+{% for row in rows %}
+.row-{{ row.index }} {
+    {{ row.style }}
+}
+{% endfor %}
 
 {% for col in columns %}
 .col-{{ col.index }} {
     width: {{ col.width }};
     {{ col.style }}
-}
-{% endfor %}
-
-{% for row in rows %}
-.row-{{ row.index }} {
-    {{ row.style }}
 }
 {% endfor %}
 </style>
@@ -60,10 +61,10 @@ td {
             {% for c_idx in range(cells[r_idx]|length) %}
                 {% set cell = cells[r_idx][c_idx] %}
                 {% if not cell.is_merged %}
-                <td class="col-{{ c_idx }}"
+                <td class="row-{{ r_idx }} col-{{ c_idx }}"
                     rowspan="{{ cell.row_span }}"
                     colspan="{{ cell.col_span }}"
-                    style="{{ cell.final_style }}">
+                    style="{{ cell.style.to_css() }}">
                     {% if cell.image_url %}
                     <img src="{{ cell.image_url }}"
                          style="{% if cell.image_width %}width: {{ cell.image_width }}px;{% endif %}
@@ -108,12 +109,6 @@ def render_to_html(table: "Table", *, background_color: str = "transparent") -> 
         row_data = []
         for col_index in range(len(table._cells[0])):
             cell = table._cells[row_index][col_index]
-            row = table.get_row(row_index)
-            col = table.get_column(col_index)
-
-            # Cascading: Table -> Row/Col -> Cell
-            base_style = table.style.merge(col.style).merge(row.style)
-            final_style = base_style.merge(cell.style)
 
             # Handle Image URL resolution
             cell.image_url = ""
@@ -124,8 +119,6 @@ def render_to_html(table: "Table", *, background_color: str = "transparent") -> 
                     abs_img_path = os.path.abspath(cell.image_path)
                     cell.image_url = f"file://{abs_img_path}"
 
-            # Attach final style string for template
-            cell.final_style = final_style.to_css()
             row_data.append(cell)
         cells_data.append(row_data)
 
@@ -224,17 +217,19 @@ def render_to_image(
             y_offset += img.height
 
     # Visual Auto-Crop: Find the bounding box of non-white pixels
-    # 1. Convert to RGB to ensure we have a standard background to check
-    bg = Image.new("RGB", pil_image.size, (255, 255, 255))
+    # Use 'L' (grayscale) mode to reduce memory usage (1 byte per pixel vs 3)
     if pil_image.mode == "RGBA":
-        bg.paste(pil_image, mask=pil_image.split()[3])
+        # Flatten RGBA onto a white grayscale background
+        grayscale = Image.new("L", pil_image.size, 255)
+        grayscale.paste(pil_image.convert("L"), mask=pil_image.getchannel("A"))
     else:
-        bg.paste(pil_image)
+        # For RGB or other modes, just convert to grayscale
+        grayscale = pil_image.convert("L")
 
-    # 2. Invert and find bbox of "ink"
+    # Invert and find bbox of "ink" (non-white pixels)
     import PIL.ImageOps
 
-    inverted = PIL.ImageOps.invert(bg)
+    inverted = PIL.ImageOps.invert(grayscale)
     bbox = inverted.getbbox()
 
     if bbox:
