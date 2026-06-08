@@ -25,7 +25,7 @@ class Table(StyledObject):
         self._cells = [[Cell() for _ in range(cols)] for _ in range(rows)]
         self._row_objects = [Row(i) for i in range(rows)]
         self._col_objects = [Column(i) for i in range(cols)]
-        self.width: int | str = "100%"
+        self.width: int | str = "auto"
         self.font_files: list[str] = []
 
     def cell(self, row_index: int, col_index: int) -> Cell:
