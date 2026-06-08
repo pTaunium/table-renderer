@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Configurable Background Color**: Added `background_color` parameter to HTML and image export methods to allow overriding the default transparent background.
+
+### Performance
+- **CSS Cascading**: Massively improved rendering speed and memory usage for large tables by shifting style merging from Python object allocation ($O(R \times C)$) to native CSS class cascading.
+- **Render Loop Optimization**: Removed redundant bounds-checking loops during the hot path of rendering.
+- **Memory-Efficient Auto-Crop**: Reduced memory usage during the visual auto-crop phase by ~66% by analyzing images in Grayscale (`L` mode) instead of `RGB/RGBA`.
+
+### Fixed
+- **Default Table Width**: Changed the default `Table` width from `"100%"` to `"auto"` to prevent tables from expanding unnecessarily to fill the safety canvas, resulting in much tighter and more accurate auto-crops.
+
 ## [0.2.0] - 2026-06-09
 
 ### Added
