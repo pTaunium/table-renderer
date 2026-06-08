@@ -241,6 +241,12 @@ def render_to_image(
         pil_image = pil_image.crop((left, top, right, bottom))
 
     # Save to the requested format (Pillow handles most formats)
+    if output_path.lower().endswith((".jpg", ".jpeg")) and pil_image.mode == "RGBA":
+        # Create a white background image and paste the RGBA image on it to flatten it
+        rgb_image = Image.new("RGB", pil_image.size, (255, 255, 255))
+        rgb_image.paste(pil_image, mask=pil_image.split()[3])
+        pil_image = rgb_image
+
     pil_image.save(output_path)
 
 
