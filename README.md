@@ -19,6 +19,7 @@
 - **Business Friendly**: Uses `pypdfium2` (Apache-2.0) and `WeasyPrint` for a 100% MIT-compatible dependency chain.
 - **High-Quality Rendering**: Powered by WeasyPrint (CSS engine), supporting complex text wrapping, alignment, and cell merging.
 - **Auto-Crop**: Automatically crops images to the actual table area using visual detection, eliminating unnecessary white space.
+- **Continuous Long Tables**: Automatically stitches multiple PDF pages into a single continuous long image, preventing content from being cut off.
 - **Object-Oriented API**: Clean `Table` -> `Row/Column` -> `Cell` hierarchy with fluent interface support.
 - **Cascading Styles**: Manage visual styles effortlessly with "Global Defaults + Local Overrides."
 - **Multi-language Font Support**: Support for font stacks (e.g., different fonts for English and Chinese).
@@ -131,6 +132,15 @@ Mix fixed widths, percentages, and auto-sizing.
 table.set_width(800)                  # Total table width
 table.get_column(0).set_width(200)    # Fixed 200px
 table.get_column(1).set_width("auto") # Distribute remaining space
+```
+
+**Handling Extremely Wide Tables:**
+The library dynamically estimates canvas width to prevent clipping. However, if your table contains unbreakable strings (like long URLs) and relies purely on auto-layout, you can manually override the canvas width. The auto-crop feature will automatically trim any excess white space.
+
+```python
+# Force a massive canvas width; auto-crop will cleanly trim the excess
+table.set_width(15000)
+table.to_image("wide_table.png")
 ```
 
 ### 5. DPI, Formats & Padding

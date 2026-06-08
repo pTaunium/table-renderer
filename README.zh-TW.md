@@ -19,6 +19,7 @@
 - **商業友善**: 使用 `pypdfium2` (Apache-2.0) 和 `WeasyPrint`，擁有 100% 相容 MIT 的依賴鏈。
 - **高品質排版**: 基於 WeasyPrint (CSS 引擎)，支援複雜的文字換行、對齊與儲存格合併。
 - **自動裁切**: 透過視覺偵測自動將圖片裁切至實際表格範圍，消除不必要的留白。
+- **連續長表格支援**: 自動將多個 PDF 頁面拼接成單張連續長圖，防止內容因分頁而被裁斷。
 - **物件導向 API**: 簡潔的 `Table` -> `Row/Column` -> `Cell` 階層設計，並支援流暢的鏈式呼叫 (fluent interface)。
 - **樣式繼承**: 以「全域預設 + 局部覆蓋」的方式輕鬆管理視覺樣式。
 - **多語系字型支援**: 支援字型堆疊 (例如中英文分別使用不同字型)。
@@ -131,6 +132,15 @@ table.cell(1, 1).set_image("https://example.com/image.jpg", width=100)
 table.set_width(800)                  # Total table width
 table.get_column(0).set_width(200)    # Fixed 200px
 table.get_column(1).set_width("auto") # Distribute remaining space
+```
+
+**處理極寬的表格：**
+本套件會動態估算畫布寬度以防止裁斷。然而，如果您的表格包含不可換行的長字串（如超長 URL），且完全依賴自動排版，您可以手動覆蓋畫布寬度。不用擔心設定得太大，自動裁切功能會完美修剪多餘的留白。
+
+```python
+# 強制設定巨大的畫布寬度；自動裁切會乾淨地修剪多餘邊距
+table.set_width(15000)
+table.to_image("wide_table.png")
 ```
 
 ### 5. DPI、格式與留白

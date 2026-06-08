@@ -13,6 +13,7 @@ HTML_TEMPLATE = """
 <head>
 <style>
 @page {
+    size: {{ page_width }}px {{ page_height }}px; /* Dynamically estimated size */
     margin: 0;
 }
 body {
@@ -127,8 +128,29 @@ def render_to_html(table: "Table") -> str:
             row_data.append(cell)
         cells_data.append(row_data)
 
+    # Estimate safe canvas width to prevent clipping
+    # Base it on the number of columns if explicit widths aren't provided (assume ~100px min per column)
+    col_count = len(table._cells[0]) if table._cells else 0
+    estimated_width = max(2000, col_count * 100)
+
+    if isinstance(table.width, int):
+        estimated_width = max(estimated_width, table.width + 100)
+
+    col_width_sum = 0
+    for c in table._col_objects:
+        if isinstance(c.width, int):
+            col_width_sum += c.width
+    estimated_width = max(estimated_width, col_width_sum + 100)
+
+    # Estimate safe canvas height to optimize rendering speed for small tables, capped at 5000px
+    # Assume a generous average of 40px per row plus 100px padding
+    estimated_height = len(table._cells) * 40 + 100
+    estimated_height = min(max(estimated_height, 500), 5000)
+
     template = Template(HTML_TEMPLATE)
     return template.render(
+        page_width=estimated_width,
+        page_height=estimated_height,
         table_width=f"{table.width}px" if isinstance(table.width, int) else table.width,
         table_style=table.style.to_css(),
         font_faces=font_faces,
@@ -171,16 +193,29 @@ def render_to_image(
 
     # Load the PDF from bytes
     with pdfium.PdfDocument(pdf_bytes) as pdf:
-        page = pdf[0]
-
-        # Render page to a bitmap
-        # scale_factor: 72 is the default PDF DPI
+        page_images = []
         scale_factor = dpi / 72
-        bitmap = page.render(scale=scale_factor)
 
-        # Convert pdfium bitmap to Pillow Image
-        pil_image = bitmap.to_pil()
-        bitmap.close()
+        # Render each page to a PIL Image
+        for page in pdf:
+            bitmap = page.render(scale=scale_factor)
+            pil_page = bitmap.to_pil()
+            page_images.append(pil_page)
+            bitmap.close()
+
+        if not page_images:
+            return
+
+        # Stitch all pages vertically into one long image
+        total_width = max(img.width for img in page_images)
+        total_height = sum(img.height for img in page_images)
+
+        # Create a large canvas
+        pil_image = Image.new("RGBA", (total_width, total_height), (255, 255, 255, 0))
+        y_offset = 0
+        for img in page_images:
+            pil_image.paste(img, (0, y_offset))
+            y_offset += img.height
 
     # Visual Auto-Crop: Find the bounding box of non-white pixels
     # 1. Convert to RGB to ensure we have a standard background to check
