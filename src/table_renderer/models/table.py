@@ -112,7 +112,14 @@ class Table(StyledObject):
         self.font_files.append(font_path)
         return self
 
-    def to_image(self, output_path: str, *, dpi: int = 144, padding: int = 10) -> None:
+    def to_image(
+        self,
+        output_path: str,
+        *,
+        dpi: int = 144,
+        padding: int = 10,
+        background_color: str = "transparent",
+    ) -> None:
         """
         Render the table to an image file.
 
@@ -120,17 +127,27 @@ class Table(StyledObject):
             output_path: Path to the output file (e.g., 'table.png', 'table.webp').
             dpi: Resolution of the output image.
             padding: Padding around the table in pixels.
+            background_color: Background color of the image.
         """
-        render_to_image(self, output_path, dpi=dpi, padding=padding)
+        render_to_image(
+            self,
+            output_path,
+            dpi=dpi,
+            padding=padding,
+            background_color=background_color,
+        )
 
-    def to_html(self, output_path: str) -> None:
+    def to_html(
+        self, output_path: str, *, background_color: str = "transparent"
+    ) -> None:
         """
         Export the table to an HTML file.
 
         Args:
             output_path: Path to the output HTML file.
+            background_color: Background color of the HTML body.
         """
-        save_html(self, output_path)
+        save_html(self, output_path, background_color=background_color)
 
     def _prepare_render(self) -> None:
         """Handle merging logic and cascading styles before rendering."""

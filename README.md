@@ -151,6 +151,9 @@ Fine-tune your output image quality and margins.
 # High-res JPG with custom 20px padding
 table.to_image("output.jpg", dpi=300, padding=20)
 
+# PNG with a solid white background (instead of the default transparent)
+table.to_image("output_white.png", background_color="white")
+
 # Lightweight WebP with tight margins
 table.to_image("output.webp", dpi=72, padding=0)
 ```

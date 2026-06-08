@@ -19,7 +19,7 @@ HTML_TEMPLATE = """
 body {
     margin: 0;
     padding: 20px;
-    background-color: transparent;
+    background-color: {{ background_color }};
 }
 {% for font in font_faces %}
 @font-face {
@@ -82,12 +82,13 @@ td {
 """
 
 
-def render_to_html(table: "Table") -> str:
+def render_to_html(table: "Table", *, background_color: str = "transparent") -> str:
     """
     Generate the HTML representation of the table.
 
     Args:
         table: The Table object to render.
+        background_color: The background color of the body.
 
     Returns:
         A string containing the complete HTML document.
@@ -151,6 +152,7 @@ def render_to_html(table: "Table") -> str:
     return template.render(
         page_width=estimated_width,
         page_height=estimated_height,
+        background_color=background_color,
         table_width=f"{table.width}px" if isinstance(table.width, int) else table.width,
         table_style=table.style.to_css(),
         font_faces=font_faces,
@@ -175,6 +177,7 @@ def render_to_image(
     *,
     dpi: int = 144,
     padding: int = 10,
+    background_color: str = "transparent",
 ) -> None:
     """
     Render the table to an image file.
@@ -184,8 +187,9 @@ def render_to_image(
         output_path: Destination path for the image.
         dpi: Target resolution.
         padding: Margin around the table.
+        background_color: Background color of the image.
     """
-    html_content = render_to_html(table)
+    html_content = render_to_html(table, background_color=background_color)
     # WeasyPrint v53+ removed write_png, so we render to PDF then convert to PNG
     pdf_bytes = HTML(string=html_content).write_pdf()
 
@@ -252,14 +256,17 @@ def render_to_image(
     pil_image.save(output_path)
 
 
-def save_html(table: "Table", output_path: str) -> None:
+def save_html(
+    table: "Table", output_path: str, *, background_color: str = "transparent"
+) -> None:
     """
     Save the table's HTML representation to a file.
 
     Args:
         table: The Table object to export.
         output_path: Path to the destination HTML file.
+        background_color: Background color of the HTML body.
     """
-    html_content = render_to_html(table)
+    html_content = render_to_html(table, background_color=background_color)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)

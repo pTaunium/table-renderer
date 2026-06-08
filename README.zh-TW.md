@@ -151,6 +151,9 @@ table.to_image("wide_table.png")
 # High-res JPG with custom 20px padding
 table.to_image("output.jpg", dpi=300, padding=20)
 
+# 設定純白背景的 PNG (覆蓋預設的透明背景)
+table.to_image("output_white.png", background_color="white")
+
 # Lightweight WebP with tight margins
 table.to_image("output.webp", dpi=72, padding=0)
 ```
