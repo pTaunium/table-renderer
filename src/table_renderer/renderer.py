@@ -40,16 +40,16 @@ td {
     {{ table_style }}
 }
 
-{% for row in rows %}
-.row-{{ row.index }} {
-    {{ row.style }}
-}
-{% endfor %}
-
 {% for col in columns %}
 .col-{{ col.index }} {
     width: {{ col.width }};
     {{ col.style }}
+}
+{% endfor %}
+
+{% for row in rows %}
+.row-{{ row.index }} {
+    {{ row.style }}
 }
 {% endfor %}
 </style>
