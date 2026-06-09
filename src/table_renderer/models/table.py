@@ -2,10 +2,10 @@ from typing import Self
 
 from table_renderer.renderer import render_to_image, save_html
 
-from .base import StyledObject
 from .cell import Cell
 from .column import Column
 from .row import Row
+from .style import StyledObject
 
 
 class Table(StyledObject):

@@ -1,4 +1,4 @@
-from .base import StyledObject
+from .style import StyledObject
 
 
 class Row(StyledObject):

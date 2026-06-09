@@ -1,6 +1,6 @@
 from typing import Self
 
-from .base import StyledObject
+from .style import StyledObject
 
 
 class Column(StyledObject):
