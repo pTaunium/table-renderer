@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "table-renderer"
-version = "0.3.0"
+version = "0.4.0"
 description = "A Python library for rendering structured tables as high-quality images or HTML."
 readme = "README.md"
 license = "MIT"
