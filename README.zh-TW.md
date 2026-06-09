@@ -21,7 +21,7 @@
 - **自動裁切**: 透過視覺偵測自動將圖片裁切至實際表格範圍，消除不必要的留白。
 - **連續長表格支援**: 自動將多個 PDF 頁面拼接成單張連續長圖，防止內容因分頁而被裁斷。
 - **物件導向 API**: 簡潔的 `Table` -> `Row/Column` -> `Cell` 階層設計，並支援流暢的鏈式呼叫 (fluent interface)。
-- **樣式繼承**: 以「全域預設 + 局部覆蓋」的方式輕鬆管理視覺樣式。
+- **樣式繼承**: 輕鬆管理視覺樣式，並遵循直覺的優先級規則：`Cell` > `Row` > `Column` > `Table`。
 - **多語系字型支援**: 支援字型堆疊 (例如中英文分別使用不同字型)。
 - **自訂解析度**: 可調整 DPI 以輸出高解析度圖片 (例如適用於列印的 300 DPI)。
 - **輕量化部署**: 不依賴如 Chromium 等重型瀏覽器依賴，非常適合 Docker/K8s 環境。
@@ -59,7 +59,6 @@ from table_renderer import Table
 
 # 1. Initialize a 3x3 table
 table = Table(3, 3)
-table.set_width(600)
 table.set_border(width=1, color="black", style="solid")
 
 # 2. Set header style (Row 0)
@@ -82,8 +81,8 @@ table.cell(2, 2).set_text("$79")
 # 4. Global column styling (align prices to the right)
 table.get_column(2).set_align(horizontal="right").set_width(100)
 
-# 5. Export to image with custom DPI and padding
-table.to_image("report.png", dpi=300, padding=20)
+# 5. Export to image with custom DPI, padding, and background color
+table.to_image("report.png", dpi=300, padding=20, background_color="white")
 ```
 
 ---

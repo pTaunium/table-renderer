@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **CSS Specificity**: Swapped the generation order of `.col-*` and `.row-*` CSS classes to ensure that `Row` styles correctly override `Column` styles when cascading, aligning with intuitive table formatting behavior.
+
+
 ## [0.3.0] - 2026-06-09
 
 ### Added

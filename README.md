@@ -21,7 +21,7 @@
 - **Auto-Crop**: Automatically crops images to the actual table area using visual detection, eliminating unnecessary white space.
 - **Continuous Long Tables**: Automatically stitches multiple PDF pages into a single continuous long image, preventing content from being cut off.
 - **Object-Oriented API**: Clean `Table` -> `Row/Column` -> `Cell` hierarchy with fluent interface support.
-- **Cascading Styles**: Manage visual styles effortlessly with "Global Defaults + Local Overrides."
+- **Cascading Styles**: Manage visual styles effortlessly with logical precedence: `Cell` > `Row` > `Column` > `Table`.
 - **Multi-language Font Support**: Support for font stacks (e.g., different fonts for English and Chinese).
 - **Customizable Resolution**: Adjustable DPI for high-resolution output (e.g., 300 DPI for print).
 - **Lightweight Deployment**: No heavy browser dependencies (like Chromium), making it ideal for Docker/K8s.
@@ -59,7 +59,6 @@ from table_renderer import Table
 
 # 1. Initialize a 3x3 table
 table = Table(3, 3)
-table.set_width(600)
 table.set_border(width=1, color="black", style="solid")
 
 # 2. Set header style (Row 0)
@@ -82,8 +81,8 @@ table.cell(2, 2).set_text("$79")
 # 4. Global column styling (align prices to the right)
 table.get_column(2).set_align(horizontal="right").set_width(100)
 
-# 5. Export to image with custom DPI and padding
-table.to_image("report.png", dpi=300, padding=20)
+# 5. Export to image with custom DPI, padding, and background color
+table.to_image("report.png", dpi=300, padding=20, background_color="white")
 ```
 
 ---
