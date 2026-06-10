@@ -10,7 +10,7 @@ class Style:
     font_color: str | None = None
     font_family: str | None = None
     font_weight: Literal["normal", "bold"] | None = None
-    bg_color: str | None = None
+    background_color: str | None = None
     text_align: Literal["left", "center", "right"] | None = None
     vertical_align: Literal["top", "middle", "bottom"] | None = None
     border_width: int | None = None
@@ -72,8 +72,8 @@ class Style:
             css.append(f"font-family: {', '.join(families)};")
         if self.font_weight:
             css.append(f"font-weight: {self.font_weight};")
-        if self.bg_color:
-            css.append(f"background-color: {self.bg_color};")
+        if self.background_color:
+            css.append(f"background-color: {self.background_color};")
         if self.text_align:
             css.append(f"text-align: {self.text_align};")
         if self.vertical_align:
@@ -150,7 +150,7 @@ class StyledObject:
         Returns:
             The object itself for chaining.
         """
-        self.style.bg_color = color
+        self.style.background_color = color
         return self
 
     def set_align(

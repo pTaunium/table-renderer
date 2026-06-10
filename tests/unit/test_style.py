@@ -4,12 +4,12 @@ from table_renderer import Style
 def test_style_merge_basic_success() -> None:
     """Test that merging two styles correctly combines attributes."""
     s1 = Style(font_size=12, font_color="black")
-    s2 = Style(font_color="red", bg_color="yellow")
+    s2 = Style(font_color="red", background_color="yellow")
     merged = s1.merge(s2)
 
     assert merged.font_size == 12
     assert merged.font_color == "red"
-    assert merged.bg_color == "yellow"
+    assert merged.background_color == "yellow"
 
 
 def test_style_to_css_valid_conversion() -> None:

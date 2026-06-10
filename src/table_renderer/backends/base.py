@@ -1,4 +1,4 @@
-"""Abstract base class for image rendering backends."""
+"""Protocol defining the image rendering backend interface."""
 
 from __future__ import annotations
 

@@ -6,8 +6,6 @@ def test_table_initialization_with_dimensions() -> None:
     table = Table(2, 3)
     assert len(table._cells) == 2
     assert len(table._cells[0]) == 3
-    assert table._rows_count == 2
-    assert table._cols_count == 3
 
 
 def test_table_auto_growth_on_access() -> None:
@@ -28,7 +26,7 @@ def test_table_merging_logic_correctly_marks_cells() -> None:
     """Test that merging logic correctly sets the is_merged flag on covered cells."""
     table = Table(4, 4)
     # Big merge: 3x3 starting at (0,0)
-    table.cell(0, 0).span(rows=3, cols=3).set_text("Big")
+    table.cell(0, 0).set_span(rows=3, cols=3).set_text("Big")
     table._prepare_render()
 
     for r in range(3):

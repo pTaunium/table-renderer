@@ -57,8 +57,8 @@ class WeasyPrintRenderer:
 
         # WeasyPrint v53+ removed write_png, so we render to PDF then convert
         pdf_bytes = HTML(string=html).write_pdf()
-        raw_image = _pdf_to_image(pdf_bytes, dpi=dpi)
-        return _auto_crop(raw_image, padding=padding)
+        full_page_image = _pdf_to_image(pdf_bytes, dpi=dpi)
+        return _auto_crop(full_page_image, padding=padding)
 
 
 def _estimate_page_css(table: Table) -> str:
@@ -106,14 +106,14 @@ def _estimate_width(table: Table) -> int:
         return max(_MIN_PAGE_WIDTH, table.width + _PAGE_PADDING)
 
     # Sum column widths: use explicit value or default
-    total = 0
+    total_width = 0
     for col in table._col_objects:
         if isinstance(col.width, int):
-            total += col.width
+            total_width += col.width
         else:
-            total += _DEFAULT_COL_WIDTH
+            total_width += _DEFAULT_COL_WIDTH
 
-    return max(_MIN_PAGE_WIDTH, total + _PAGE_PADDING)
+    return max(_MIN_PAGE_WIDTH, total_width + _PAGE_PADDING)
 
 
 def _estimate_height(table: Table) -> int:
@@ -195,31 +195,31 @@ def _pdf_to_image(pdf_bytes: bytes, *, dpi: int) -> Image:
     from PIL import Image
 
     with pdfium.PdfDocument(pdf_bytes) as pdf:
-        page_images = []
-        scale_factor = dpi / 72
+        rendered_pages = []
+        scale_factor = dpi / 72  # PDF standard resolution is 72 DPI
 
         # Render each page to a PIL Image
         for page in pdf:
             # fill_color=(255, 255, 255, 0) ensures transparent background
             bitmap = page.render(scale=scale_factor, fill_color=(255, 255, 255, 0))
-            pil_page = bitmap.to_pil()
-            page_images.append(pil_page)
+            page_image = bitmap.to_pil()
+            rendered_pages.append(page_image)
             bitmap.close()
 
-        if not page_images:
+        if not rendered_pages:
             return Image.new("RGBA", (1, 1), (255, 255, 255, 0))
 
         # Stitch all pages vertically into one long image
-        total_width = max(img.width for img in page_images)
-        total_height = sum(img.height for img in page_images)
-        result = Image.new("RGBA", (total_width, total_height), (255, 255, 255, 0))
+        total_width = max(img.width for img in rendered_pages)
+        total_height = sum(img.height for img in rendered_pages)
+        stitched = Image.new("RGBA", (total_width, total_height), (255, 255, 255, 0))
 
         y_offset = 0
-        for img in page_images:
-            result.paste(img, (0, y_offset))
+        for img in rendered_pages:
+            stitched.paste(img, (0, y_offset))
             y_offset += img.height
 
-    return result
+    return stitched
 
 
 def _auto_crop(image: Image, *, padding: int) -> Image:
@@ -238,8 +238,8 @@ def _auto_crop(image: Image, *, padding: int) -> Image:
     import PIL.ImageOps
     from PIL import Image
 
-    # Visual Auto-Crop: Find the bounding box of non-white pixels
-    # Use 'L' (grayscale) mode to reduce memory usage (1 byte per pixel vs 3)
+    # Find the bounding box of non-transparent/non-white content.
+    # Use 'L' (grayscale) mode to reduce memory usage (1 byte per pixel vs 3).
     if image.mode == "RGBA":
         # Flatten RGBA onto a white grayscale background
         grayscale = Image.new("L", image.size, 255)
@@ -253,7 +253,7 @@ def _auto_crop(image: Image, *, padding: int) -> Image:
     bbox = inverted.getbbox()
 
     if bbox:
-        # Add some padding
+        # Expand crop region by the requested padding, clamped to image bounds
         left, top, right, bottom = bbox
         left = max(0, left - padding)
         top = max(0, top - padding)

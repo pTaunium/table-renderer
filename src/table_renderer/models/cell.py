@@ -1,5 +1,7 @@
 from typing import Self
 
+from typing_extensions import deprecated
+
 from .style import StyledObject
 
 
@@ -56,9 +58,8 @@ class Cell(StyledObject):
         self.image_height = height
         return self
 
-    def span(self, *, rows: int = 1, cols: int = 1) -> Self:
-        """
-        Set the row and column span for merging.
+    def set_span(self, *, rows: int = 1, cols: int = 1) -> Self:
+        """Set the row and column span for merging.
 
         Args:
             rows: Number of rows to span.
@@ -70,3 +71,26 @@ class Cell(StyledObject):
         self.row_span = rows
         self.col_span = cols
         return self
+
+    @deprecated("Use `set_span` instead.")
+    def span(self, *, rows: int = 1, cols: int = 1) -> Self:
+        """Set the row and column span for merging.
+
+        .. deprecated::
+            Use :meth:`set_span` instead.
+
+        Args:
+            rows: Number of rows to span.
+            cols: Number of columns to span.
+
+        Returns:
+            The cell itself for chaining.
+        """
+        import warnings
+
+        warnings.warn(
+            "Cell.span() is deprecated, use Cell.set_span() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.set_span(rows=rows, cols=cols)

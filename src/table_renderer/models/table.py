@@ -1,6 +1,6 @@
 from typing import Self
 
-from table_renderer.renderer import render_to_image, save_html
+from table_renderer.renderer import save_html, save_image
 
 from .cell import Cell
 from .column import Column
@@ -20,8 +20,6 @@ class Table(StyledObject):
             cols: Initial number of columns.
         """
         super().__init__()
-        self._rows_count = rows
-        self._cols_count = cols
         self._cells = [[Cell() for _ in range(cols)] for _ in range(rows)]
         self._row_objects = [Row(i) for i in range(rows)]
         self._col_objects = [Column(i) for i in range(cols)]
@@ -138,7 +136,7 @@ class Table(StyledObject):
             padding: Padding around the table in pixels.
             background_color: Background color of the image.
         """
-        render_to_image(
+        save_image(
             self,
             output_path,
             dpi=dpi,

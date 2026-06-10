@@ -16,11 +16,12 @@ from jinja2 import Environment, FileSystemLoader, Template
 if TYPE_CHECKING:
     from .models.table import Table
 
-# The HTML template is now loaded from templates/table.html.j2
+# HTML template loaded from templates/table.html.j2
 _JINJA_ENV: Environment | None = None
 
 
 def _get_template() -> Template:
+    """Return the cached Jinja2 table template, initializing the environment on first call."""
     global _JINJA_ENV
     if _JINJA_ENV is None:
         template_dir = Path(__file__).parent / "templates"
@@ -47,14 +48,14 @@ def _prepare_render_context(
 
     font_faces = []
     for font_path in table.font_files:
-        name = os.path.splitext(os.path.basename(font_path))[0]
+        font_name = os.path.splitext(os.path.basename(font_path))[0]
         # Convert path to absolute file URL for rendering engines
-        abs_path = os.path.abspath(font_path)
-        font_faces.append({"name": name, "path": f"file://{abs_path}"})
+        absolute_font_path = os.path.abspath(font_path)
+        font_faces.append({"name": font_name, "path": f"file://{absolute_font_path}"})
 
-    cells_data = []
+    cell_matrix = []
     for row_index in range(len(table._cells)):
-        row_data = []
+        cell_row = []
         for col_index in range(len(table._cells[0])):
             cell = table._cells[row_index][col_index]
 
@@ -64,11 +65,11 @@ def _prepare_render_context(
                 if cell.image_path.startswith(("http://", "https://")):
                     cell.image_url = cell.image_path
                 else:
-                    abs_img_path = os.path.abspath(cell.image_path)
-                    cell.image_url = f"file://{abs_img_path}"
+                    absolute_image_path = os.path.abspath(cell.image_path)
+                    cell.image_url = f"file://{absolute_image_path}"
 
-            row_data.append(cell)
-        cells_data.append(row_data)
+            cell_row.append(cell)
+        cell_matrix.append(cell_row)
 
     return {
         "background_color": background_color,
@@ -88,7 +89,7 @@ def _prepare_render_context(
         "rows": [
             {"index": r.index, "style": r.style.to_css()} for r in table._row_objects
         ],
-        "cells": cells_data,
+        "cells": cell_matrix,
     }
 
 

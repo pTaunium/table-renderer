@@ -13,7 +13,7 @@ def test_styled_object_setters_update_style() -> None:
     assert obj.style.font_color == "blue"
     assert obj.style.font_family == "Arial"
     assert obj.style.font_weight == "bold"
-    assert obj.style.bg_color == "white"
+    assert obj.style.background_color == "white"
     assert obj.style.text_align == "center"
     assert obj.style.vertical_align == "middle"
     assert obj.style.border_width == 1
@@ -25,7 +25,7 @@ def test_cell_initialization_and_setters() -> None:
     assert cell.value == "Init"
     cell.set_text("New")
     assert cell.value == "New"
-    cell.span(rows=2, cols=3)
+    cell.set_span(rows=2, cols=3)
     assert cell.row_span == 2
     assert cell.col_span == 3
 
