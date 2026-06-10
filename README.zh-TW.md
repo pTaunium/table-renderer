@@ -60,6 +60,7 @@ from table_renderer import Table
 # 1. Initialize a 3x3 table
 table = Table(3, 3)
 table.set_border(width=1, color="black", style="solid")
+table.set_width(400)
 
 # 2. Set header style (Row 0)
 header = table.get_row(0)
@@ -71,7 +72,7 @@ table.cell(0, 1).set_text("Category")
 table.cell(0, 2).set_text("Price")
 
 # 3. Add content and demonstrate merging
-table.cell(1, 0).set_text("MacBook Pro").span(rows=1, cols=2)
+table.cell(1, 0).set_text("MacBook Pro").set_span(rows=1, cols=2)
 table.cell(1, 2).set_text("$2,000")
 
 table.cell(2, 0).set_text("Magic Mouse")
@@ -95,7 +96,7 @@ table.to_image("report.png", dpi=300, padding=20, background_color="white")
 
 ```python
 # Merge first row, first two columns (1 row, 2 columns)
-table.cell(0, 0).span(rows=1, cols=2).set_text("Merged Header")
+table.cell(0, 0).set_span(rows=1, cols=2).set_text("Merged Header")
 ```
 
 ### 2. 字型管理
@@ -125,12 +126,13 @@ table.cell(1, 1).set_image("https://example.com/image.jpg", width=100)
 
 ### 4. 版面與尺寸
 
-混用固定寬度、百分比以及自動調整大小。
+混用固定寬度、高度、百分比以及自動調整大小。
 
 ```python
 table.set_width(800)                  # Total table width
-table.get_column(0).set_width(200)    # Fixed 200px
+table.get_column(0).set_width(200)    # Fixed column width (200px)
 table.get_column(1).set_width("auto") # Distribute remaining space
+table.get_row(0).set_height(100)      # Fixed row height (100px)
 ```
 
 **處理極寬的表格：**
