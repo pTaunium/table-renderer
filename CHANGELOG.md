@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Row Heights**: Added `height` property and `.set_height()` method to the `Row` model for explicit row height control. The rendering backend now utilizes explicit row heights to skip unnecessary cell processing and improve estimation accuracy.
+
+### Performance
+- **Template Caching**: Extracted the Jinja2 template to a separate file (`table.html.j2`) and cached it via `jinja2.Environment` to eliminate redundant parsing overhead across repeated renders.
+- **Table Expansion**: Replaced $O(N)$ linear table expansion loops with $O(1)$ list concatenation, significantly improving speed when appending rows and columns sequentially or randomly.
+
+### Changed
+- **Pluggable Architecture**: Completely refactored the rendering engine to use a pluggable `ImageRenderer` protocol. Separated HTML string generation (`html_generator.py`) from `WeasyPrint` logic to ensure strict separation of concerns.
+- **API Standardization**: Renamed `render_to_image` to `save_image` for symmetry with `save_html`. Renamed `Cell.span()` to `Cell.set_span()` for consistency with other setter methods. Old signatures are preserved but will raise a `DeprecationWarning` if used.
+- **Docs**: Revamped `AGENTS.md` and updated `README.md` to document the new architecture, `.set_height()`, and deprecation policies.
+
 ## [0.4.0] - 2026-06-10
 
 ### Fixed
