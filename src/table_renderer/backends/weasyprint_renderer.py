@@ -6,12 +6,21 @@ from typing import TYPE_CHECKING
 
 from weasyprint import HTML
 
-from table_renderer.html_generator import estimate_page_css, render_to_html
+from table_renderer.html_generator import render_to_html
 
 if TYPE_CHECKING:
     from PIL.Image import Image
 
+    from table_renderer.models.cell import Cell
     from table_renderer.models.table import Table
+
+_DEFAULT_COL_WIDTH = 100
+_DEFAULT_FONT_SIZE = 16
+_CELL_PADDING = 8
+_LINE_HEIGHT_RATIO = 1.4
+_MIN_PAGE_WIDTH = 200
+_MIN_PAGE_HEIGHT = 200
+_PAGE_PADDING = 60  # body padding (20px * 2) + safety margin
 
 
 class WeasyPrintRenderer:
@@ -41,7 +50,7 @@ class WeasyPrintRenderer:
         Returns:
             A PIL Image (RGBA mode) tightly cropped to the table.
         """
-        page_css = estimate_page_css(table)
+        page_css = _estimate_page_css(table)
         html = render_to_html(
             table, background_color=background_color, extra_css=page_css
         )
@@ -50,6 +59,123 @@ class WeasyPrintRenderer:
         pdf_bytes = HTML(string=html).write_pdf()
         raw_image = _pdf_to_image(pdf_bytes, dpi=dpi)
         return _auto_crop(raw_image, padding=padding)
+
+
+def _estimate_page_css(table: Table) -> str:
+    """Generate ``@page`` CSS rules with estimated canvas size.
+
+    Estimates the PDF page dimensions based on the actual table
+    content — column widths, font sizes, text line counts, and
+    embedded image heights — rather than fixed magic numbers.
+
+    Args:
+        table: The Table object to estimate dimensions for.
+
+    Returns:
+        A CSS string containing the ``@page`` rule.
+    """
+    estimated_width = _estimate_width(table)
+    estimated_height = _estimate_height(table)
+
+    return (
+        "@page {\n"
+        f"    size: {estimated_width}px {estimated_height}px;"
+        " /* Dynamically estimated size */\n"
+        "    margin: 0;\n"
+        "}"
+    )
+
+
+def _estimate_width(table: Table) -> int:
+    """Estimate the required page width in pixels.
+
+    Uses explicit column widths where available and falls back
+    to a default per-column width for unset columns.
+
+    Args:
+        table: The Table to estimate width for.
+
+    Returns:
+        Estimated width in pixels.
+    """
+    if not table._cells:
+        return _MIN_PAGE_WIDTH
+
+    # If the table has an explicit pixel width, use it directly
+    if isinstance(table.width, int):
+        return max(_MIN_PAGE_WIDTH, table.width + _PAGE_PADDING)
+
+    # Sum column widths: use explicit value or default
+    total = 0
+    for col in table._col_objects:
+        if isinstance(col.width, int):
+            total += col.width
+        else:
+            total += _DEFAULT_COL_WIDTH
+
+    return max(_MIN_PAGE_WIDTH, total + _PAGE_PADDING)
+
+
+def _estimate_height(table: Table) -> int:
+    """Estimate the required page height in pixels.
+
+    Calculates a per-row height based on the tallest cell in
+    each row, considering font size, number of text lines, and
+    embedded image height.
+
+    Args:
+        table: The Table to estimate height for.
+
+    Returns:
+        Estimated height in pixels.
+    """
+    if not table._cells:
+        return _MIN_PAGE_HEIGHT
+
+    # Resolve the table-level default font size
+    table_font_size = table.style.font_size or _DEFAULT_FONT_SIZE
+
+    total_height = 0
+    for row_idx, row_cells in enumerate(table._cells):
+        # Resolve row-level font size
+        row_font_size = table._row_objects[row_idx].style.font_size or table_font_size
+
+        row_height = 0
+        for cell in row_cells:
+            if cell.is_merged:
+                continue
+
+            cell_height = _estimate_cell_height(cell, default_font_size=row_font_size)
+            row_height = max(row_height, cell_height)
+
+        total_height += row_height
+
+    return max(_MIN_PAGE_HEIGHT, total_height + _PAGE_PADDING)
+
+
+def _estimate_cell_height(cell: Cell, *, default_font_size: int) -> int:
+    """Estimate the height of a single cell in pixels.
+
+    Accounts for font size, number of text lines (split by newlines),
+    cell padding, and embedded image height.
+
+    Args:
+        cell: The Cell to estimate.
+        default_font_size: Inherited font size if the cell has none set.
+
+    Returns:
+        Estimated cell height in pixels.
+    """
+    font_size = cell.style.font_size or default_font_size
+
+    # Text height: number of lines * font_size * line-height + padding
+    line_count = max(1, cell.value.count("\n") + 1) if cell.value else 1
+    text_height = int(line_count * font_size * _LINE_HEIGHT_RATIO) + _CELL_PADDING * 2
+
+    # Image height (if present)
+    image_height = (cell.image_height or 0) + (_CELL_PADDING if cell.image_path else 0)
+
+    return text_height + image_height
 
 
 def _pdf_to_image(pdf_bytes: bytes, *, dpi: int) -> Image:

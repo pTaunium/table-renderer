@@ -3,12 +3,6 @@
 This module converts Table data models into HTML document strings.
 It provides shared utilities that rendering backends can use, but
 is not tied to any specific rendering engine.
-
-Key design decisions:
-- The HTML template does NOT contain @page rules or other
-  engine-specific CSS. Backends inject those via ``extra_css``.
-- ``estimate_page_css()`` is provided as a utility for backends
-  that need CSS Paged Media rules (e.g., WeasyPrint).
 """
 
 from __future__ import annotations
@@ -96,45 +90,6 @@ def _prepare_render_context(
         ],
         "cells": cells_data,
     }
-
-
-def estimate_page_css(table: Table) -> str:
-    """Generate ``@page`` CSS rules with estimated canvas size.
-
-    Produces ``@page`` rules for CSS Paged Media, primarily used by
-    the WeasyPrint backend to set PDF page dimensions. The canvas
-    size is estimated to be large enough to contain the table
-    without clipping.
-
-    Args:
-        table: The Table object to estimate dimensions for.
-
-    Returns:
-        A CSS string containing the ``@page`` rule.
-    """
-    col_count = len(table._cells[0]) if table._cells else 0
-    estimated_width = max(2000, col_count * 100)
-
-    if isinstance(table.width, int):
-        estimated_width = max(estimated_width, table.width + 100)
-
-    col_width_sum = 0
-    for c in table._col_objects:
-        if isinstance(c.width, int):
-            col_width_sum += c.width
-    estimated_width = max(estimated_width, col_width_sum + 100)
-
-    # Generous average of 40px per row plus 100px padding, capped at 5000px
-    estimated_height = len(table._cells) * 40 + 100
-    estimated_height = min(max(estimated_height, 500), 5000)
-
-    return (
-        "@page {\n"
-        f"    size: {estimated_width}px {estimated_height}px;"
-        " /* Dynamically estimated size */\n"
-        "    margin: 0;\n"
-        "}"
-    )
 
 
 def render_to_html(

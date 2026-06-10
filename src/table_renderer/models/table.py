@@ -83,12 +83,16 @@ class Table(StyledObject):
         if cols_to_add > 0:
             for row in self._cells:
                 row.extend(Cell() for _ in range(cols_to_add))
-            self._col_objects.extend(Column(i) for i in range(current_cols, target_cols))
+            self._col_objects.extend(
+                Column(i) for i in range(current_cols, target_cols)
+            )
 
         # 2. Add new rows with the full target_cols capacity
         rows_to_add = target_rows - current_rows
         if rows_to_add > 0:
-            self._cells.extend([Cell() for _ in range(target_cols)] for _ in range(rows_to_add))
+            self._cells.extend(
+                [Cell() for _ in range(target_cols)] for _ in range(rows_to_add)
+            )
             self._row_objects.extend(Row(i) for i in range(current_rows, target_rows))
 
     def set_width(self, width: int | str) -> Self:

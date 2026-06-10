@@ -9,11 +9,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from table_renderer.backends.base import ImageRenderer
-from table_renderer.backends.weasyprint_renderer import WeasyPrintRenderer
-
-from .html_generator import estimate_page_css
-from .html_generator import render_to_html as _generate_html
+from .backends.base import ImageRenderer
+from .backends.weasyprint_renderer import WeasyPrintRenderer
+from .html_generator import render_to_html
 
 if TYPE_CHECKING:
     from PIL.Image import Image
@@ -29,20 +27,6 @@ def _get_default_renderer() -> ImageRenderer:
     if _DEFAULT_RENDERER is None:
         _DEFAULT_RENDERER = WeasyPrintRenderer()
     return _DEFAULT_RENDERER
-
-
-def render_to_html(table: Table, *, background_color: str = "transparent") -> str:
-    """Generate the HTML representation of the table.
-
-    Args:
-        table: The Table object to render.
-        background_color: The background color of the body.
-
-    Returns:
-        A string containing the complete HTML document.
-    """
-    page_css = estimate_page_css(table)
-    return _generate_html(table, background_color=background_color, extra_css=page_css)
 
 
 def render_to_image(
