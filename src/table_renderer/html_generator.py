@@ -14,84 +14,24 @@ Key design decisions:
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader, Template
 
 if TYPE_CHECKING:
     from .models.table import Table
 
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-{{ extra_css }}
-body {
-    margin: 0;
-    padding: 20px;
-    background-color: {{ background_color }};
-}
-{% for font in font_faces %}
-@font-face {
-    font-family: '{{ font.name }}';
-    src: url('{{ font.path }}');
-}
-{% endfor %}
+# The HTML template is now loaded from templates/table.html.j2
+_JINJA_ENV: Environment | None = None
 
-table {
-    border-collapse: collapse;
-    width: {{ table_width }};
-    {{ table_style }}
-}
 
-td {
-    padding: 8px;
-    box-sizing: border-box;
-    {{ table_style }}
-}
-
-{% for col in columns %}
-.col-{{ col.index }} {
-    width: {{ col.width }};
-    {{ col.style }}
-}
-{% endfor %}
-
-{% for row in rows %}
-.row-{{ row.index }} {
-    {{ row.style }}
-}
-{% endfor %}
-</style>
-</head>
-<body>
-    <table>
-        {% for r_idx in range(cells|length) %}
-        <tr class="row-{{ r_idx }}">
-            {% for c_idx in range(cells[r_idx]|length) %}
-                {% set cell = cells[r_idx][c_idx] %}
-                {% if not cell.is_merged %}
-                <td class="row-{{ r_idx }} col-{{ c_idx }}"
-                    rowspan="{{ cell.row_span }}"
-                    colspan="{{ cell.col_span }}"
-                    style="{{ cell.style.to_css() }}">
-                    {% if cell.image_url %}
-                    <img src="{{ cell.image_url }}"
-                         style="{% if cell.image_width %}width: {{ cell.image_width }}px;{% endif %}
-                                {% if cell.image_height %}height: {{ cell.image_height }}px;{% endif %}">
-                    <br>
-                    {% endif %}
-                    {{ cell.value | replace('\\n', '<br>') }}
-                </td>
-                {% endif %}
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
-"""
+def _get_template() -> Template:
+    global _JINJA_ENV
+    if _JINJA_ENV is None:
+        template_dir = Path(__file__).parent / "templates"
+        _JINJA_ENV = Environment(loader=FileSystemLoader(template_dir))  # noqa: S701
+    return _JINJA_ENV.get_template("table.html.j2")
 
 
 def _prepare_render_context(
@@ -217,5 +157,6 @@ def render_to_html(
     """
     context = _prepare_render_context(table, background_color=background_color)
     context["extra_css"] = extra_css
-    template = Template(HTML_TEMPLATE)
+    template = _get_template()
+
     return template.render(**context)
