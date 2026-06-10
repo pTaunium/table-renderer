@@ -34,6 +34,7 @@ td {
 {% endfor %}
 {% for row in rows %}
 .row-{{ row.index }} {
+  height: {{ row.height }};
   {{ row.style }}
 }
 {% endfor %}

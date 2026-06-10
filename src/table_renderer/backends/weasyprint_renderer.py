@@ -137,8 +137,15 @@ def _estimate_height(table: Table) -> int:
 
     total_height = 0
     for row_idx, row_cells in enumerate(table._cells):
+        row_obj = table._row_objects[row_idx]
+
+        # If an explicit integer height is provided, use it
+        if isinstance(row_obj.height, int):
+            total_height += row_obj.height
+            continue
+
         # Resolve row-level font size
-        row_font_size = table._row_objects[row_idx].style.font_size or table_font_size
+        row_font_size = row_obj.style.font_size or table_font_size
 
         row_height = 0
         for cell in row_cells:

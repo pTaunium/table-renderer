@@ -90,7 +90,12 @@ def _prepare_render_context(
             for c in table._col_objects
         ],
         "rows": [
-            {"index": r.index, "style": r.style.to_css()} for r in table._row_objects
+            {
+                "index": r.index,
+                "height": _format_length(r.height),
+                "style": r.style.to_css(),
+            }
+            for r in table._row_objects
         ],
         "cells": cell_matrix,
     }
