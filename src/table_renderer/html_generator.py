@@ -29,6 +29,11 @@ def _get_template() -> Template:
     return _JINJA_ENV.get_template("table.html.j2")
 
 
+def _format_length(value: int | str) -> str:
+    """Format an integer as pixels, or return a string CSS value as is."""
+    return f"{value}px" if isinstance(value, int) else value
+
+
 def _prepare_render_context(
     table: Table, *, background_color: str = "transparent"
 ) -> dict[str, Any]:
@@ -73,15 +78,13 @@ def _prepare_render_context(
 
     return {
         "background_color": background_color,
-        "table_width": f"{table.width}px"
-        if isinstance(table.width, int)
-        else table.width,
+        "table_width": _format_length(table.width),
         "table_style": table.style.to_css(),
         "font_faces": font_faces,
         "columns": [
             {
                 "index": c.index,
-                "width": f"{c.width}px" if isinstance(c.width, int) else c.width,
+                "width": _format_length(c.width),
                 "style": c.style.to_css(),
             }
             for c in table._col_objects
