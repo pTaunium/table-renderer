@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-11
+
 ### Added
 - **Row Heights**: Added `height` property and `.set_height()` method to the `Row` model for explicit row height control. The rendering backend now utilizes explicit row heights to skip unnecessary cell processing and improve estimation accuracy.
 
