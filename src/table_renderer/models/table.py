@@ -39,10 +39,7 @@ class Table(StyledObject):
         Returns:
             The Cell object.
         """
-        while row_index >= len(self._cells):
-            self._add_row()
-        while col_index >= len(self._cells[0]):
-            self._add_col()
+        self._ensure_capacity(row_index, col_index)
         return self._cells[row_index][col_index]
 
     def get_row(self, row_index: int) -> Row:
@@ -55,8 +52,8 @@ class Table(StyledObject):
         Returns:
             The Row object.
         """
-        while row_index >= len(self._row_objects):
-            self._add_row()
+        current_cols = len(self._cells[0]) if self._cells else 0
+        self._ensure_capacity(row_index, max(0, current_cols - 1))
         return self._row_objects[row_index]
 
     def get_column(self, col_index: int) -> Column:
@@ -69,22 +66,30 @@ class Table(StyledObject):
         Returns:
             The Column object.
         """
-        while col_index >= len(self._col_objects):
-            self._add_col()
+        current_rows = len(self._cells)
+        self._ensure_capacity(max(0, current_rows - 1), col_index)
         return self._col_objects[col_index]
 
-    def _add_row(self) -> None:
-        """Internal helper to add a row."""
-        new_row_idx = len(self._cells)
-        cols_count = len(self._cells[0]) if self._cells else self._cols_count
-        self._cells.append([Cell() for _ in range(cols_count)])
-        self._row_objects.append(Row(new_row_idx))
+    def _ensure_capacity(self, target_row: int, target_col: int) -> None:
+        """Efficiently grow the table to ensure it has at least target_row+1 rows and target_col+1 cols."""
+        current_rows = len(self._cells)
+        current_cols = len(self._cells[0]) if current_rows > 0 else 0
 
-    def _add_col(self) -> None:
-        """Internal helper to add a column."""
-        for row in self._cells:
-            row.append(Cell())
-        self._col_objects.append(Column(len(self._col_objects)))
+        target_rows = max(current_rows, target_row + 1)
+        target_cols = max(current_cols, target_col + 1)
+
+        # 1. Expand existing rows with new columns if needed
+        cols_to_add = target_cols - current_cols
+        if cols_to_add > 0:
+            for row in self._cells:
+                row.extend(Cell() for _ in range(cols_to_add))
+            self._col_objects.extend(Column(i) for i in range(current_cols, target_cols))
+
+        # 2. Add new rows with the full target_cols capacity
+        rows_to_add = target_rows - current_rows
+        if rows_to_add > 0:
+            self._cells.extend([Cell() for _ in range(target_cols)] for _ in range(rows_to_add))
+            self._row_objects.extend(Row(i) for i in range(current_rows, target_rows))
 
     def set_width(self, width: int | str) -> Self:
         """
